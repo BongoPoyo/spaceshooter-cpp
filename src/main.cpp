@@ -10,6 +10,12 @@
 using namespace std;
 using namespace sf;
 
+struct Player
+{
+  Vector2f pos;
+  int health = 3;
+  Sprite sprite(texture);
+};
 
 int main() 
 {
@@ -18,8 +24,13 @@ int main()
 
 
   const Texture texture("sprites/player.png");
-  Sprite sprite(texture);
-  Vector2f position = {400, 580};
+  struct Player player;
+  player.sprite.setTexture(texture);
+  player.pos = {400, 580};
+  player.sprite.setPosition(player.pos);
+
+  // Sprite sprite(texture);
+  // Vector2f position = {400, 580};
 
   while (window.isOpen()) 
   {
@@ -29,20 +40,23 @@ int main()
         window.close();
     }
 
-    if (Keyboard::isKeyPressed(Keyboard::Key::Left))
-      position.x -= 5;
-    if (Keyboard::isKeyPressed(Keyboard::Key::Right))
-      position.x += 5;
+    // if (Keyboard::isKeyPressed(Keyboard::Key::Left))
+    //   position.x -= 5;
+    // if (Keyboard::isKeyPressed(Keyboard::Key::Right))
+    //   position.x += 5;
     
-    if(position.x >= 770){
-      position.x = 770;
-    }
-    if(position.x <= 0) {
-      position.x = 0;
-    }
-    sprite.setPosition(position);
+    // if(position.x >= 770)
+    // {
+    //   position.x = 770;
+    // }
+    // if(position.x <= 0)
+    // {
+    //   position.x = 0;
+    // }
+    //sprite.setPosition(position);
+
     window.clear();
-    window.draw(sprite);
+    window.draw(player.sprite);
     window.display();
   }
 }
