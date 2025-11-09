@@ -1,37 +1,26 @@
 @echo off
-SETLOCAL ENABLEDELAYEDEXPANSION
 
-REM Project paths
-SET "BUILD_DIR=build"
-SET "EXECUTABLE=SpaceShooter.exe"
 
-REM Create build directory if missing
-IF NOT EXIST "%BUILD_DIR%" (
-    mkdir "%BUILD_DIR%"
+echo Creating build directory...
+mkdir build
+cd build
+
+echo Configuring project with CMake...
+cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+
+echo Building project...
+mingw32-make
+
+IF EXIST SpaceShooter.exe (
+    cd ..
+    echo Running SpaceShooter.exe...
+    build\SpaceShooter.exe
+) ELSE (
+    echo SpaceShooter.exe not found!
 )
 
-REM Enter build directory
-cd "%BUILD_DIR%"
-
-REM Run CMake configuration if no cache exists
-IF NOT EXIST "CMakeCache.txt" (
-    echo [CMake] Configuring project...
-    cmake ..
-)
-
-REM Build using all available CPU cores
-echo [Build] Compiling...
-cmake --build . -- /m
-
-REM Go back to project root
 cd ..
 
-REM Run the compiled program if it exists
-IF EXIST "%BUILD_DIR%\%EXECUTABLE%" (
-    echo [Run] Launching program...
-    "%BUILD_DIR%\%EXECUTABLE%"
-) ELSE (
-    echo [Error] Executable not found: %BUILD_DIR%\%EXECUTABLE%
-    exit /b 1
-)
+echo Done!
+
 
