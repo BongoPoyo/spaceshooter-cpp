@@ -10,7 +10,10 @@ add_executable(${PROJECT_NAME} ${SRC})
 set(SFML_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/third_party/SFML-3.0.2")
 include_directories("${SFML_ROOT}/include")
 link_directories("${SFML_ROOT}/lib")
-
+set(SFML_LIB_DIR "${SFML_ROOT}/lib")
 # Link manually (adjust names if using static libraries)
-target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-window sfml-system)
-
+target_link_libraries(${PROJECT_NAME}
+    "${SFML_LIB_DIR}/libsfml-graphics.a"
+    "${SFML_LIB_DIR}/libsfml-window.a"
+    "${SFML_LIB_DIR}/libsfml-system.a"
+)
