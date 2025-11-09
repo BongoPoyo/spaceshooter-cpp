@@ -24,10 +24,8 @@ int main()
       if (event->is<Event::Closed>())
         window.close();
     }
-
     window.clear();
     window.draw(sprite);
     window.display();
   }
-
 }
