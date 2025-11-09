@@ -1,62 +1,44 @@
-// Normal Libraries
-#include <iostream>
-#include <math.h>
-#include <cstdlib>
-// SFML Libraries
-#include <SFML/Window.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Graphics.hpp>
-// Using namespaces
-using namespace std;
-using namespace sf;
+#include "raylib.h"
 
-struct Player
+//------------------------------------------------------------------------------------
+// Program main entry point
+//------------------------------------------------------------------------------------
+int main(void)
 {
-  Vector2f pos;
-  int health = 3;
-  Sprite sprite(texture);
-};
+    // Initialization
+    //--------------------------------------------------------------------------------------
+    const int screenWidth = 800;
+    const int screenHeight = 450;
 
-int main() 
-{
-  RenderWindow window(VideoMode({800, 600}), "SFML window");
-  window.setFramerateLimit(60);
+    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
 
+    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    //--------------------------------------------------------------------------------------
 
-  const Texture texture("sprites/player.png");
-  struct Player player;
-  player.sprite.setTexture(texture);
-  player.pos = {400, 580};
-  player.sprite.setPosition(player.pos);
-
-  // Sprite sprite(texture);
-  // Vector2f position = {400, 580};
-
-  while (window.isOpen()) 
-  {
-    while (const optional event = window.pollEvent()) 
+    // Main game loop
+    while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-      if (event->is<Event::Closed>())
-        window.close();
+        // Update
+        //----------------------------------------------------------------------------------
+        // TODO: Update your variables here
+        //----------------------------------------------------------------------------------
+
+        // Draw
+        //----------------------------------------------------------------------------------
+        BeginDrawing();
+
+            ClearBackground(RAYWHITE);
+
+            DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+
+        EndDrawing();
+        //----------------------------------------------------------------------------------
     }
 
-    // if (Keyboard::isKeyPressed(Keyboard::Key::Left))
-    //   position.x -= 5;
-    // if (Keyboard::isKeyPressed(Keyboard::Key::Right))
-    //   position.x += 5;
-    
-    // if(position.x >= 770)
-    // {
-    //   position.x = 770;
-    // }
-    // if(position.x <= 0)
-    // {
-    //   position.x = 0;
-    // }
-    //sprite.setPosition(position);
+    // De-Initialization
+    //--------------------------------------------------------------------------------------
+    CloseWindow();        // Close window and OpenGL context
+    //--------------------------------------------------------------------------------------
 
-    window.clear();
-    window.draw(player.sprite);
-    window.display();
-  }
+    return 0;
 }
