@@ -1,21 +1,27 @@
-// Normal
+// Normal Libraries
 #include <iostream>
 #include <math.h>
 #include <cstdlib>
-// SFML 
+// SFML Libraries
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
-
+// Using namespaces
+using namespace std;
 using namespace sf;
-int main() {
-  RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
+
+
+int main() 
+{
+  RenderWindow window(VideoMode({800, 600}), "SFML window");
   window.setFramerateLimit(60);
   const Texture texture("sprites/player.png");
   Sprite sprite(texture);
-  while (window.isOpen()) {
-    while (const std::optional event = window.pollEvent()) {
-      if (event->is<sf::Event::Closed>())
+  while (window.isOpen()) 
+  {
+    while (const optional event = window.pollEvent()) 
+    {
+      if (event->is<Event::Closed>())
         window.close();
     }
 
