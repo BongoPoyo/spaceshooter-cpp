@@ -17,3 +17,4 @@ target_link_libraries(${PROJECT_NAME}
     "${SFML_LIB_DIR}/libsfml-window.a"
     "${SFML_LIB_DIR}/libsfml-system.a"
 )
+
