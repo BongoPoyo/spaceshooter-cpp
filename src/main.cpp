@@ -19,7 +19,7 @@ int main()
 
   const Texture texture("sprites/player.png");
   Sprite sprite(texture);
-  Vector2f position = {400, 300};
+  Vector2f position = {400, 580};
 
   while (window.isOpen()) 
   {
@@ -33,6 +33,13 @@ int main()
       position.x -= 5;
     if (Keyboard::isKeyPressed(Keyboard::Key::Right))
       position.x += 5;
+    
+    if(position.x >= 770){
+      position.x = 770;
+    }
+    if(position.x <= 0) {
+      position.x = 0;
+    }
     sprite.setPosition(position);
     window.clear();
     window.draw(sprite);
