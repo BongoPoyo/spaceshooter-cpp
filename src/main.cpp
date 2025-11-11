@@ -25,9 +25,9 @@ int main(void)
     {
         handle_input();
         game_update();
-        
+
         BeginDrawing();
-        
+
         ClearBackground(BLACK);
         game_draw();
         obstacle.draw();

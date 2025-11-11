@@ -11,21 +11,7 @@ struct Obstacle {
     {
         position = i_position; // To set the position of the obstacle with respect to the grid using parameter i_position
 
-        grid = {
-            {0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0},
-            {0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0},
-            {0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0},
-            {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0},
-            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-            {1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1},
-            {1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1},
-            {1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1}
-        }; // This is the obstacle at the start as it gets damaged more of the 1s will turn into 0s to show that it is damaged
+        ; // This is the obstacle at the start as it gets damaged more of the 1s will turn into 0s to show that it is damaged
 
         for(unsigned int row = 0; row < grid.size(); ++row)
         {
@@ -38,11 +24,11 @@ struct Obstacle {
                     float pos_y = position.y  + row * 3;
                     Block block = Block({pos_x, pos_y});
                     blocks.push_back(block);
-                }      
-            } 
+                }
+            }
         }
     }
-    
+
     void draw()
     {
         for(auto& block: blocks)
