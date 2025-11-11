@@ -7,6 +7,7 @@ g++ src/main.cpp src/obstacle.cpp -o src/main -I/usr/include -L/usr/lib -lraylib
 if [ $? -ne 0 ]; then
     echo
     echo -e "\e[31mCompilation failed!\e[0m"
+
     exit 1
 fi
 
