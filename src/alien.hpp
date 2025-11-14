@@ -1,35 +1,34 @@
 #pragma once
-#include<raylib.h>
+#include <raylib.h>
 
 struct Alien {
   static Texture2D image[3];
   int type;
   Vector2 position;
 
-  Alien(int i_type, Vector2 i_position)
-  {
+  Alien(int i_type, Vector2 i_position) {
     position = i_position;
     type = i_type;
 
-    if(image[type -1].id==0) // To only load the enemy aliens from the memory if they haven't been loaded already
+    if (image[type - 1].id == 0) // To only load the enemy aliens from the
+                                 // memory if they haven't been loaded already
     {
-      switch (type) 
-      {
-        case 1:
-          image[0] = LoadTexture("sprites/alien-1.png");
-          break;
-        case 2:
-          image[1] = LoadTexture("sprites/alien-2.png");
-          break;
-        case 3:
-          image[2] = LoadTexture("sprites/alien-3.png");
-          break;
-        default:
-          image[0] = LoadTexture("sprites/alien-1.png");
-          break;
+      switch (type) {
+      case 1:
+        image[0] = LoadTexture("sprites/alien-1.png");
+        break;
+      case 2:
+        image[1] = LoadTexture("sprites/alien-2.png");
+        break;
+      case 3:
+        image[2] = LoadTexture("sprites/alien-3.png");
+        break;
+      default:
+        image[0] = LoadTexture("sprites/alien-1.png");
+        break;
       }
     }
-    // switch (type) 
+    // switch (type)
     // {
     //   case 1:
     //     image = LoadTexture("sprites/alien-1.png");
@@ -46,25 +45,22 @@ struct Alien {
     // }
   }
 
-  void uninitalize()
-  {
-    for(int i=0; i!=4; i++)
-    {
+  void uninitalize() {
+    for (int i = 0; i != 4; i++) {
       UnloadTexture(image[i]); // To unload all the types of the aliens
     }
   }
 
-  void update(int alien_direction)
-  {
+  void update(int alien_direction) {
     position.x = position.x + alien_direction;
   }
 
-  void draw() 
-  {
-    DrawTextureV(image[type-1], position, WHITE);
-  }
+  void draw() { DrawTextureV(image[type - 1], position, WHITE); }
 
-  int get_type() {
-    return type;
+  int get_type() { return type; }
+
+  Rectangle get_rect() {
+    return {position.x, position.y, float(image[type - 1].width),
+            float(image[type - 1].height)};
   }
 };

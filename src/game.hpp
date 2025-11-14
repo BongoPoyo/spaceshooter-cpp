@@ -2,9 +2,13 @@
 #include "alien.hpp"
 #include "obstacle.hpp"  // To include the obstacle file's struct
 #include "spaceship.hpp" // To include spaceship file's functions
+#include <raylib.h>
 
-int alien_direction = 1; // Global variable to use it in the move_alien function and passing it as an argument to update() function in the alien.hpp file
-constexpr static float alien_laser_interval = 0.35; // Global variable to calculate the laser shooting interval by aliens
+int alien_direction =
+    1; // Global variable to use it in the move_alien function and passing it as
+       // an argument to update() function in the alien.hpp file
+constexpr static float alien_laser_interval =
+    0.35; // Global variable to calculate the laser shooting interval by aliens
 float alien_fired_last_time = 0.0;
 std::vector<Obstacle>
     obstacles; // A universial vector variable to store obstacles so we can
@@ -12,17 +16,21 @@ std::vector<Obstacle>
 std::vector<Alien> aliens;
 std::vector<Laser> alien_lasers;
 
+int spaceship_health = 3;
+
+bool game_run;
 // To avoid cross referencing we put the create obstacle function in the game
 // header file
 std::vector<Obstacle> obstacle_create() {
   int obstacle_width = Obstacle({100, 100}).grid[0].size() * 3;
   float obstacle_gap =
-      (GetScreenWidth() - (4 * obstacle_width)) / 5.0f; // Takes the gap between two obstacles by taking the width of all
+      (GetScreenWidth() - (4 * obstacle_width)) /
+      5.0f; // Takes the gap between two obstacles by taking the width of all
             // the 4 obstacles and subtracting it from the screen width and
             // dividing it by 5 cause for 4 obstacles you have to add 5 gaps ( 3
             // for each other and 2 for the parameters of the screen )
-  for (int i = 0; i != 4; i++) // Running it exactly 4 times to create 4 objects
-                               // and later draw them
+  for (int i = 0; i != 4; i++) // game_running it exactly 4 times to create 4
+                               // objects and later draw them
   {
     float obstacle_position_x =
         (i + 1) * obstacle_gap +
@@ -34,16 +42,14 @@ std::vector<Obstacle> obstacle_create() {
   return obstacles;
 }
 
-void game_uninitialize()
- {
-  for (auto &alien : aliens) 
-  {
+void game_uninitialize() {
+  for (auto &alien : aliens) {
     alien.uninitalize();
     aliens.pop_back();
   }
- }
-void game_draw()
-{
+}
+void game_draw() {
+
   spaceship_draw(); // Draw the spaceship from the spaceship header file
   //
   for (auto &laser : spaceship_lasers) {
@@ -55,9 +61,17 @@ void game_draw()
   for (auto &alien : aliens) {
     alien.draw();
   }
-  for(auto &laser: alien_lasers)
-  {
+  for (auto &laser : alien_lasers) {
     laser.draw();
+  }
+  std::string text = "Health: " + std::to_string(spaceship_health);
+  DrawText(text.c_str(), 0, 0, 20, LIGHTGRAY);
+
+  if (!game_run) {
+    ClearBackground(BLACK);
+
+    DrawText("You lose! Press 'Enter' to restart", 15,
+             (GetScreenHeight() / 2) - 20, 40, LIGHTGRAY);
   }
 }
 
@@ -84,36 +98,44 @@ std::vector<Alien> create_aliens() {
 void alien_laser() // To shoot lasers from the aliens
 {
   double current_time = GetTime();
-  if(current_time - alien_fired_last_time >= alien_laser_interval && !aliens.empty())
-  {
-  int random_value = GetRandomValue(0, aliens.size()-1); 
-  Alien& alien = aliens[random_value]; 
-  alien_lasers.push_back(Laser({alien.position.x + alien.image[alien.type - 1 ].width/2,
-                               alien.position.y + alien.image[alien.type - 1].height}, 6));
-  alien_fired_last_time = GetTime();
+  if (current_time - alien_fired_last_time >= alien_laser_interval &&
+      !aliens.empty()) {
+    int random_value = GetRandomValue(0, aliens.size() - 1);
+    Alien &alien = aliens[random_value];
+    alien_lasers.push_back(
+        Laser({alien.position.x + alien.image[alien.type - 1].width / 2,
+               alien.position.y + alien.image[alien.type - 1].height},
+              6));
+    alien_fired_last_time = GetTime();
   }
 }
 
-void alien_move_down(int distance) // To move the aliens down in the game.hpp file by calling this function in the alien_move function
+void alien_move_down(
+    int distance) // To move the aliens down in the game.hpp file by calling
+                  // this function in the alien_move function
 {
-  for(auto& alien: aliens)
-  {
+  for (auto &alien : aliens) {
     alien.position.y = alien.position.y + distance;
   }
 }
 
-void alien_move() // To move the aliens horizontally in the game.hpp file by calling a function update() from the alien struct
+void alien_move() // To move the aliens horizontally in the game.hpp file by
+                  // calling a function update() from the alien struct
 {
-  for(auto& alien: aliens)
-  {
-    if(alien.position.x + alien.image[alien.type-1].width>GetScreenWidth()) // To avoid aliens getting out from the right side of the window screen
+  for (auto &alien : aliens) {
+    if (alien.position.x + alien.image[alien.type - 1].width >
+        GetScreenWidth()) // To avoid aliens getting out from the right side of
+                          // the window screen
     {
-      alien_direction = -1; // We make them move left if they collide from the right boundary of the screen
-      alien_move_down(2); // To move the alien 4 pixels down
+      alien_direction = -1; // We make them move left if they collide from the
+                            // right boundary of the screen
+      alien_move_down(2);   // To move the alien 4 pixels down
     }
-    if(alien.position.x < 0) // To avoid aliens getting out from the left side of the window screen
+    if (alien.position.x < 0) // To avoid aliens getting out from the left side
+                              // of the window screen
     {
-      alien_direction = 1; // We make them move right if they collide from the left boundary of the screen
+      alien_direction = 1; // We make them move right if they collide from the
+                           // left boundary of the screen
       alien_move_down(2);
     }
     alien.update(alien_direction);
@@ -121,6 +143,8 @@ void alien_move() // To move the aliens horizontally in the game.hpp file by cal
 }
 
 void game_initialize() {
+  game_run = true;
+  spaceship_health = 3;
   spaceship_initialize();
   obstacles = obstacle_create();
   aliens = create_aliens();
@@ -138,8 +162,7 @@ void laser_delete() {
     }
   }
 
-  for (auto laser = alien_lasers.begin();
-       laser != alien_lasers.end();) {
+  for (auto laser = alien_lasers.begin(); laser != alien_lasers.end();) {
     if (!laser->active) {
       laser = alien_lasers.erase(laser);
     } else {
@@ -148,7 +171,81 @@ void laser_delete() {
   }
 }
 
+void game_over() {
+  std::cout << "Game Over" << std::endl;
+  game_run = false;
+}
+void check_for_collisions() {
+  // Spaceship lasers
+  for (auto &laser : spaceship_lasers) {
+    auto it = aliens.begin();
+    while (it != aliens.end()) {
+      if (CheckCollisionRecs(it->get_rect(), laser.get_rect())) {
+        it = aliens.erase(it);
+        laser.active = false;
+      } else {
+        ++it;
+      }
+    }
+
+    for (auto &obstacle : obstacles) {
+      auto it = obstacle.blocks.begin();
+      while (it != obstacle.blocks.end()) {
+        if (CheckCollisionRecs(it->get_rect(), laser.get_rect())) {
+          it = obstacle.blocks.erase(it);
+          laser.active = false;
+        } else {
+          ++it;
+        }
+      }
+    }
+  }
+
+  // Alien lasers
+  for (auto &laser : alien_lasers) {
+    if (CheckCollisionRecs(laser.get_rect(), spaceship_get_rect())) {
+      laser.active = false;
+      spaceship_health -= 1;
+      if (spaceship_health == 0) {
+        game_over();
+      }
+    }
+    for (auto &obstacle : obstacles) {
+      auto it = obstacle.blocks.begin();
+      while (it != obstacle.blocks.end()) {
+        if (CheckCollisionRecs(it->get_rect(), laser.get_rect())) {
+          it = obstacle.blocks.erase(it);
+          laser.active = false;
+        } else {
+          ++it;
+        }
+      }
+    }
+  }
+
+  // Aliens
+  for (auto &alien : aliens) {
+    for (auto &obstacle : obstacles) {
+      auto it = obstacle.blocks.begin();
+      while (it != obstacle.blocks.end()) {
+        if (CheckCollisionRecs(it->get_rect(), alien.get_rect())) {
+          it = obstacle.blocks.erase(it);
+        } else {
+          ++it;
+        }
+      }
+    }
+
+    if (CheckCollisionRecs(alien.get_rect(), spaceship_get_rect())) {
+      game_over();
+    }
+  }
+}
 void game_update() {
+  if (!game_run) {
+    return;
+  }
+
   spaceship_boundaries();
 
   for (auto &laser : spaceship_lasers) {
@@ -160,14 +257,34 @@ void game_update() {
     obstacle.draw();
   }
   alien_laser();
-  for(auto& laser: alien_lasers)
-  {
+  for (auto &laser : alien_lasers) {
     laser.update();
   }
   alien_move();
+  check_for_collisions();
+}
+
+void game_reset() {
+  // delete everything
+  spaceship_reset();
+  aliens.clear();
+  alien_lasers.clear();
+  obstacles.clear();
+
+  // recreate everything
+  game_initialize();
 }
 
 void handle_input() {
+  if (!game_run) {
+    if (IsKeyDown(KEY_ENTER)) {
+      game_reset();
+    }
+    if (IsKeyDown(KEY_Q)) {
+      CloseWindow();
+    }
+    return;
+  }
   if (IsKeyDown(KEY_LEFT)) {
     spaceship_position.x = spaceship_position.x - 5;
   } else if (IsKeyDown(KEY_RIGHT)) {
