@@ -3,12 +3,11 @@
 #include "obstacle.hpp"  // To include the obstacle file's struct
 #include "spaceship.hpp" // To include spaceship file's functions
 #include <raylib.h>
+#include <fstream> // To store highscore in a text file so we load the text from it everytime the game is opened
 
-int alien_direction =
-    1; // Global variable to use it in the move_alien function and passing it as
+int alien_direction = 1; // Global variable to use it in the move_alien function and passing it as
        // an argument to update() function in the alien.hpp file
-constexpr static float alien_laser_interval =
-    0.35; // Global variable to calculate the laser shooting interval by aliens
+constexpr static float alien_laser_interval = 0.35; // Global variable to calculate the laser shooting interval by aliens
 float alien_fired_last_time = 0.0;
 std::vector<Obstacle>
     obstacles; // A universial vector variable to store obstacles so we can
@@ -17,8 +16,10 @@ std::vector<Alien> aliens;
 std::vector<Laser> alien_lasers;
 
 int spaceship_health = 3;
+bool game_run; // To display the Game Over screen once it becomes false
+int score; // To display score in the Game
+int highscore; 
 
-bool game_run;
 // To avoid cross referencing we put the create obstacle function in the game
 // header file
 std::vector<Obstacle> obstacle_create() {
@@ -40,6 +41,43 @@ std::vector<Obstacle> obstacle_create() {
     obstacles.push_back(Obstacle({obstacle_position_x, obstacle_position_y}));
   }
   return obstacles;
+}
+
+void check_highscore() // To check for highscore
+{
+  if(score>highscore)
+  {
+    highscore = score;
+  }
+}
+
+void save_highscore_in_file(int highscore)
+{
+  std::ofstream highscore_file("highscore.txt");
+  if(highscore_file.is_open())
+  {
+    highscore_file << highscore; // Write the current highscore in the highscore_file file pointer to update the value in the highscore.txt file
+    highscore_file.close(); 
+  }
+  else
+  {
+    std::cerr << "Failed to save highscore to file" << std::endl;
+  }
+}
+
+int load_highscore_from_file()
+{
+  int loaded_highscore = 0;
+  std::ifstream highscore_file("highscore.txt");
+    if(highscore_file.is_open())
+    {
+      highscore_file >> loaded_highscore;
+    }
+    else
+    {
+      std::cerr <<  "Failed to load highscore from file." << std::endl;
+    }
+  return loaded_highscore;
 }
 
 void game_uninitialize() {
@@ -64,8 +102,12 @@ void game_draw() {
   for (auto &laser : alien_lasers) {
     laser.draw();
   }
-  std::string text = "Health: " + std::to_string(spaceship_health);
-  DrawText(text.c_str(), 0, 0, 20, LIGHTGRAY);
+  std::string health_text = "Health: " + std::to_string(spaceship_health);
+  std::string score_text = "Score:" + std::to_string(score);
+  std::string highscore_text = "High-Score:" + std::to_string(highscore);
+  DrawText(health_text.c_str(), 0, 0, 20, RED);
+  DrawText(score_text.c_str(), 630, 0,  20, YELLOW);
+  DrawText(highscore_text.c_str(), 630/2, 0 , 20, BLUE);
 
   if (!game_run) {
     ClearBackground(BLACK);
@@ -142,7 +184,10 @@ void alien_move() // To move the aliens horizontally in the game.hpp file by
   }
 }
 
-void game_initialize() {
+void game_initialize() 
+{
+  score = 0;
+  highscore = load_highscore_from_file();
   game_run = true;
   spaceship_health = 3;
   spaceship_initialize();
@@ -155,9 +200,12 @@ void game_initialize() {
 void laser_delete() {
   for (auto laser = spaceship_lasers.begin();
        laser != spaceship_lasers.end();) {
-    if (!laser->active) {
+    if (!laser->active) 
+    {
       laser = spaceship_lasers.erase(laser);
-    } else {
+    } 
+    else
+    {
       ++laser;
     }
   }
@@ -174,16 +222,35 @@ void laser_delete() {
 void game_over() {
   std::cout << "Game Over" << std::endl;
   game_run = false;
+  save_highscore_in_file(highscore);
 }
-void check_for_collisions() {
+void check_for_collisions() 
+{
   // Spaceship lasers
   for (auto &laser : spaceship_lasers) {
     auto it = aliens.begin();
-    while (it != aliens.end()) {
-      if (CheckCollisionRecs(it->get_rect(), laser.get_rect())) {
+    while (it != aliens.end())
+    {
+      if (CheckCollisionRecs(it->get_rect(), laser.get_rect())) 
+      {
+        if(it -> type == 1)
+        {
+          score=score+100;
+        }
+        if(it -> type == 2)
+        {
+          score=score+200;
+        }
+        if(it-> type == 3)
+        {
+          score=score+300;
+        }
+        check_highscore();
         it = aliens.erase(it);
         laser.active = false;
-      } else {
+      } 
+      else 
+      {
         ++it;
       }
     }
@@ -278,9 +345,11 @@ void game_reset() {
 void handle_input() {
   if (!game_run) {
     if (IsKeyDown(KEY_ENTER)) {
+      save_highscore_in_file(highscore);
       game_reset();
     }
     if (IsKeyDown(KEY_Q)) {
+      save_highscore_in_file(highscore);
       CloseWindow();
     }
     return;
@@ -295,6 +364,7 @@ void handle_input() {
   }
 
   if (IsKeyDown(KEY_Q)) {
+    save_highscore_in_file(highscore);
     CloseWindow();
   }
 }

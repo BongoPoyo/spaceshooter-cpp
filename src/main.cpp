@@ -31,11 +31,11 @@ int main(void)
 
         ClearBackground(BLACK);
         game_draw();
-
+        
         // DrawText("Congrats! You created your first window!", 0 , 0, 20, GRAY);
         EndDrawing();
     }
-
+    save_highscore_in_file(highscore);
     CloseWindow();
 
     return 0;
