@@ -2,7 +2,7 @@
 #include<raylib.h>
 
 struct Alien {
-  Texture2D image;
+  static Texture2D image[3];
   int type;
   Vector2 position;
 
@@ -11,31 +11,57 @@ struct Alien {
     position = i_position;
     type = i_type;
 
-    switch (type) 
+    if(image[type -1].id==0) // To only load the enemy aliens from the memory if they haven't been loaded already
     {
-      case 1:
-        image = LoadTexture("sprites/alien-1.png");
-        break;
-      case 2:
-        image = LoadTexture("sprites/alien-2.png");
-        break;
-      case 3:
-        image = LoadTexture("sprites/alien-3.png");
-        break;
-      default:
-        image = LoadTexture("sprites/alien-1.png");
-        break;
+      switch (type) 
+      {
+        case 1:
+          image[0] = LoadTexture("sprites/alien-1.png");
+          break;
+        case 2:
+          image[1] = LoadTexture("sprites/alien-2.png");
+          break;
+        case 3:
+          image[2] = LoadTexture("sprites/alien-3.png");
+          break;
+        default:
+          image[0] = LoadTexture("sprites/alien-1.png");
+          break;
+      }
+    }
+    // switch (type) 
+    // {
+    //   case 1:
+    //     image = LoadTexture("sprites/alien-1.png");
+    //     break;
+    //   case 2:
+    //     image = LoadTexture("sprites/alien-2.png");
+    //     break;
+    //   case 3:
+    //     image = LoadTexture("sprites/alien-3.png");
+    //     break;
+    //   default:
+    //     image = LoadTexture("sprites/alien-1.png");
+    //     break;
+    // }
+  }
+
+  void uninitalize()
+  {
+    for(int i=0; i!=4; i++)
+    {
+      UnloadTexture(image[i]); // To unload all the types of the aliens
     }
   }
 
-  void update()
+  void update(int alien_direction)
   {
-
+    position.x = position.x + alien_direction;
   }
 
   void draw() 
   {
-    DrawTextureV(image, position, WHITE);
+    DrawTextureV(image[type-1], position, WHITE);
   }
 
   int get_type() {

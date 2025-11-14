@@ -36,4 +36,9 @@ struct Obstacle {
             block.draw();
         }
     }
+
+    void update()
+    {
+    
+    }
 };
