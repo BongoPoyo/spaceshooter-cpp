@@ -9,6 +9,7 @@
 #include"spaceship.hpp"
 #include"obstacle.hpp"
 #include"enemy.hpp"
+#include"alien.hpp"
 // Using namespace
 using namespace std;
 
@@ -20,7 +21,6 @@ int main(void)
     InitWindow(screen_width, screen_height, "Space Shooters");
     SetTargetFPS(60);
     game_initialize(); // Call function game
-    Obstacle obstacle = Obstacle({100, 100});
     while (!WindowShouldClose()) // When game is opened
     {
         handle_input();
@@ -30,7 +30,6 @@ int main(void)
 
         ClearBackground(BLACK);
         game_draw();
-        obstacle.draw();
         // DrawText("Congrats! You created your first window!", 0 , 0, 20, GRAY);
         EndDrawing();
     }

@@ -10,6 +10,22 @@ struct Alien {
   {
     position = i_position;
     type = i_type;
+
+    switch (type) 
+    {
+      case 1:
+        image = LoadTexture("sprites/alien-1.png");
+        break;
+      case 2:
+        image = LoadTexture("sprites/alien-2.png");
+        break;
+      case 3:
+        image = LoadTexture("sprites/alien-3.png");
+        break;
+      default:
+        image = LoadTexture("sprites/alien-1.png");
+        break;
+    }
   }
 
   void update()
@@ -19,10 +35,10 @@ struct Alien {
 
   void draw() 
   {
-
+    DrawTextureV(image, position, WHITE);
   }
 
-  void return_type() {
-
+  int get_type() {
+    return type;
   }
-}
+};
