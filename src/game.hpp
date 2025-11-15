@@ -19,6 +19,7 @@ std::vector<Laser> alien_lasers;
 
 int spaceship_health = 3;
 bool game_run; // To display the Game Over screen once it becomes false
+bool game_is_ended = false; // To end the game after level 5
 bool game_is_paused = false;
 int game_current_level = 1;
 int score; // To display score in the Game
@@ -70,6 +71,14 @@ void save_highscore_in_file(int highscore) {
   }
 }
 
+
+void game_end() {
+  std::cout << "Game Completed" << std::endl;
+  game_is_ended = true;
+  game_run = true;
+  save_highscore_in_file(highscore);
+}
+
 int load_highscore_from_file() {
   int loaded_highscore = 0;
   std::ifstream highscore_file("highscore.txt");
@@ -113,6 +122,12 @@ void game_draw() {
     ClearBackground(BLACK);
 
     DrawText("You lose! Press 'Enter' to restart", 15,
+             (GetScreenHeight() / 2) - 20, 40, LIGHTGRAY);
+  }
+  if (game_is_ended) {
+    ClearBackground(BLACK);
+
+    DrawText("You Win!! Press 'Enter' to restart", 15,
              (GetScreenHeight() / 2) - 20, 40, LIGHTGRAY);
   }
 
@@ -246,12 +261,18 @@ void game_over() {
 }
 
 void game_level_completed() {
-  std::cout << "Level completed" << endl;
-  aliens_speed += 0.2;
-  spaceship_fire_delay -= 0.05;
-  game_current_level += 1;
-  aliens = create_aliens();
-  obstacles = obstacle_create();
+  if (game_current_level == 5)
+  {
+    game_end();
+  }
+  else {
+    std::cout << "Level completed" << endl;
+    aliens_speed += 0.3;
+    spaceship_fire_delay -= 0.02;
+    game_current_level += 1;
+    aliens = create_aliens();
+    obstacles = obstacle_create();
+  }
 }
 void check_for_collisions() {
   // Spaceship lasers
@@ -291,10 +312,11 @@ void check_for_collisions() {
     }
   }
 
-  if (aliens.empty()) {
-    game_level_completed();
+  if (aliens.empty())
+  {
+      game_level_completed();  
   }
-  // Alien lasers
+    // Alien lasers
   for (auto &laser : alien_lasers) {
     if (CheckCollisionRecs(laser.get_rect(), spaceship_get_rect())) {
       laser.active = false;
@@ -340,6 +362,9 @@ void game_update() {
     return;
   }
 
+  if (game_is_ended) {
+    return;
+  }
   if (game_is_paused) {
     return;
   }
@@ -375,6 +400,13 @@ void game_reset() {
 }
 
 void handle_input() {
+  if (game_is_ended) {
+    if (IsKeyDown(KEY_ENTER)) {
+      save_highscore_in_file(highscore);
+      game_is_ended = false;
+      game_reset();
+    }
+  }
   if (!game_run) {
     if (IsKeyDown(KEY_ENTER)) {
       save_highscore_in_file(highscore);

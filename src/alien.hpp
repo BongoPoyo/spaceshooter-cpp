@@ -1,7 +1,7 @@
 #pragma once
 #include <raylib.h>
 
-float aliens_speed = 1.0f;
+static float aliens_speed = 1.0f;
 struct Alien {
   static Texture2D image[3];
   int type;
