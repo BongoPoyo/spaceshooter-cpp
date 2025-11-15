@@ -16,6 +16,7 @@ using namespace std;
 int main(void)
 {
     // Setting the window
+    Gamestate game_state = Gamestate::Menu;
     const int screen_width = 750;
     const int screen_height = 700;
     InitWindow(screen_width, screen_height, "Space Shooters");

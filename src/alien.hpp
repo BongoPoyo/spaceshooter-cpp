@@ -46,7 +46,8 @@ struct Alien {
     // }
   }
 
-  void uninitalize() {
+  static void uninitalize()
+  {
     for (int i = 0; i != 4; i++) {
       UnloadTexture(image[i]); // To unload all the types of the aliens
     }

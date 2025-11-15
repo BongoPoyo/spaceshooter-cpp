@@ -24,6 +24,7 @@ bool game_is_paused = false;
 int game_current_level = 1;
 int score; // To display score in the Game
 int highscore;
+int level; // To store the levels so we can use it to load in main menu
 Music music;                 // To use this variable to open music file
 Sound enemy_death_sound;     // To use this variable to open enemy_death_sound
 Sound spaceship_death_sound; // To use this variable to open game_over
@@ -32,13 +33,67 @@ Sound spaceship_damage;      // To use this variable to open player_hurt
 // Creating Gamestate to convert the whole code into a main menu format
 enum struct Gamestate{
   Menu, Game, Level_Select, Game_Over};
-  extern Gamestate game_state = Gamestate::Menu;
+  extern Gamestate game_state;
 
   void draw_menu() 
   {
     DrawText("Press ENTER To Start", GetScreenWidth()/2, GetScreenHeight()/2, 45, WHITE);
     DrawText("Press L For Level Select", GetScreenWidth()/2, GetScreenHeight()/2 + 15, 25, GRAY);
   }
+
+  void reset_level()
+  {
+    Alien::uninitalize();
+    game_run = true;
+  }
+  void update_menu()
+  {
+    if(IsKeyPressed(KEY_ENTER))
+    {
+      level = 1;
+      reset_level();
+      game_state = Gamestate::Game;
+    }
+
+    if(IsKeyPressed(KEY_L))
+    {
+    game_state = Gamestate::Level_Select;
+    }
+  }
+
+  void draw_level_select()
+  {
+    DrawText("Select Level", 220, 100, 50, YELLOW);
+    
+    for(int i=1; i<=5; i++)
+    {
+      std::string text = "LEVEL" + std::to_string(i);
+      DrawText(text.c_str(), 280, 150 + (i*35), 30, WHITE);
+    }
+
+    DrawText("Press 1-5 to Choose Level", 210, 400, 25, WHITE);
+    DrawText("Press ESC to go back", 240, 450, 20, GRAY);
+  }
+
+  void update_level_select()
+  {
+    if(IsKeyPressed(KEY_ESCAPE))
+    {
+      game_state = Gamestate::Menu;
+      return;
+    }
+
+    for(int i = 1; i <= 5; i++) 
+    {
+      if(IsKeyPressed(KEY_ONE + (i - 1)))
+      {
+        level = i;
+        reset_level();
+        game_state = Gamestate::Game;
+        }
+    }
+  }
+
 
 // To avoid cross referencing we put the create obstacle function in the game
 // header file
