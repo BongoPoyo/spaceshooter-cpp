@@ -20,6 +20,7 @@ int main(void)
     const int screen_height = 700;
     InitWindow(screen_width, screen_height, "Space Shooters");
     SetTargetFPS(60);
+    InitAudioDevice(); // Sets up the audio according to the device to use it in the game
     game_initialize(); // Call function game
 
     while (!WindowShouldClose()) // When game is opened
@@ -37,6 +38,7 @@ int main(void)
     }
     save_highscore_in_file(highscore);
     CloseWindow();
+    CloseAudioDevice(); 
 
     return 0;
 }

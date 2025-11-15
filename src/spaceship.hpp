@@ -7,18 +7,22 @@ double spaceship_last_fired_time;
 Texture2D spaceship_image;
 Vector2 spaceship_position; // Position of Spaceship
 std::vector<Laser> spaceship_lasers;
+Sound spaceship_lasers_sound;
 
 void spaceship_initialize() {
   spaceship_image =
       LoadTexture("sprites/player.png"); // Load the image and assing it to the
                                          // image attribute
+  spaceship_lasers_sound = LoadSound("sounds/player_laser_shoot.wav");
   spaceship_position.x = (GetScreenWidth() - spaceship_image.width) / 2;
   spaceship_position.y = GetScreenHeight() - spaceship_image.height;
 }
-void spaceship_uninitialize() {
-  UnloadTexture(
-      spaceship_image); // To free up the memory by unloading the player sprite
+void spaceship_uninitialize()
+{
+  UnloadTexture(spaceship_image); // To free up the memory by unloading the player sprite
+  UnloadSound(spaceship_lasers_sound);
 }
+
 void spaceship_draw() {
   DrawTextureV(spaceship_image, spaceship_position, WHITE);
 }
@@ -37,6 +41,7 @@ void spaceship_fire_laser() {
                spaceship_position.y},
               -6));
     spaceship_last_fired_time = GetTime();
+    PlaySound(spaceship_lasers_sound);
   }
 }
 

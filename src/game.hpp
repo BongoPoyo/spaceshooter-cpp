@@ -17,8 +17,13 @@ std::vector<Laser> alien_lasers;
 
 int spaceship_health = 3;
 bool game_run; // To display the Game Over screen once it becomes false
+bool is_paused = false;
 int score; // To display score in the Game
-int highscore; 
+int highscore;
+Music music; // To use this variable to open music file
+Sound enemy_death_sound; // To use this variable to open enemy_death_sound
+Sound spaceship_death_sound; // To use this variable to open game_over
+Sound spaceship_damage; // To use this variable to open player_hurt
 
 // To avoid cross referencing we put the create obstacle function in the game
 // header file
@@ -57,7 +62,7 @@ void save_highscore_in_file(int highscore)
   if(highscore_file.is_open())
   {
     highscore_file << highscore; // Write the current highscore in the highscore_file file pointer to update the value in the highscore.txt file
-    highscore_file.close(); 
+    highscore_file.close();
   }
   else
   {
@@ -84,6 +89,10 @@ void game_uninitialize() {
   for (auto &alien : aliens) {
     alien.uninitalize();
     aliens.pop_back();
+    UnloadMusicStream(music);
+    UnloadSound(enemy_death_sound);
+    UnloadSound(spaceship_death_sound);
+    UnloadSound(spaceship_damage);
   }
 }
 void game_draw() {
@@ -184,12 +193,17 @@ void alien_move() // To move the aliens horizontally in the game.hpp file by
   }
 }
 
-void game_initialize() 
+void game_initialize()
 {
   score = 0;
   highscore = load_highscore_from_file();
   game_run = true;
   spaceship_health = 3;
+  music = LoadMusicStream("sounds/music.mp3");
+  enemy_death_sound = LoadSound("sounds/enemy_death.mp3");
+  spaceship_death_sound = LoadSound("sounds/game_over.wav");
+  spaceship_damage = LoadSound("sounds/player_hurt.mp3");
+  PlayMusicStream(music);
   spaceship_initialize();
   obstacles = obstacle_create();
   aliens = create_aliens();
@@ -200,10 +214,10 @@ void game_initialize()
 void laser_delete() {
   for (auto laser = spaceship_lasers.begin();
        laser != spaceship_lasers.end();) {
-    if (!laser->active) 
+    if (!laser->active)
     {
       laser = spaceship_lasers.erase(laser);
-    } 
+    }
     else
     {
       ++laser;
@@ -221,18 +235,20 @@ void laser_delete() {
 
 void game_over() {
   std::cout << "Game Over" << std::endl;
+  PlaySound(spaceship_death_sound);
   game_run = false;
   save_highscore_in_file(highscore);
 }
-void check_for_collisions() 
+void check_for_collisions()
 {
   // Spaceship lasers
   for (auto &laser : spaceship_lasers) {
     auto it = aliens.begin();
     while (it != aliens.end())
     {
-      if (CheckCollisionRecs(it->get_rect(), laser.get_rect())) 
+      if (CheckCollisionRecs(it->get_rect(), laser.get_rect()))
       {
+        PlaySound(enemy_death_sound);
         if(it -> type == 1)
         {
           score=score+100;
@@ -248,8 +264,8 @@ void check_for_collisions()
         check_highscore();
         it = aliens.erase(it);
         laser.active = false;
-      } 
-      else 
+      }
+      else
       {
         ++it;
       }
@@ -272,6 +288,7 @@ void check_for_collisions()
   for (auto &laser : alien_lasers) {
     if (CheckCollisionRecs(laser.get_rect(), spaceship_get_rect())) {
       laser.active = false;
+      PlaySound(spaceship_damage);
       spaceship_health -= 1;
       if (spaceship_health == 0) {
         game_over();
@@ -313,6 +330,7 @@ void game_update() {
     return;
   }
 
+  UpdateMusicStream(music);
   spaceship_boundaries();
 
   for (auto &laser : spaceship_lasers) {
@@ -366,5 +384,8 @@ void handle_input() {
   if (IsKeyDown(KEY_Q)) {
     save_highscore_in_file(highscore);
     CloseWindow();
+  }
+  if (IsKeyDown(KEY_P)) {
+      is_paused = true;
   }
 }
