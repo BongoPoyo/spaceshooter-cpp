@@ -29,6 +29,17 @@ Sound enemy_death_sound;     // To use this variable to open enemy_death_sound
 Sound spaceship_death_sound; // To use this variable to open game_over
 Sound spaceship_damage;      // To use this variable to open player_hurt
 
+// Creating Gamestate to convert the whole code into a main menu format
+enum struct Gamestate{
+  Menu, Game, Level_Select, Game_Over};
+  extern Gamestate game_state = Gamestate::Menu;
+
+  void draw_menu() 
+  {
+    DrawText("Press ENTER To Start", GetScreenWidth()/2, GetScreenHeight()/2, 45, WHITE);
+    DrawText("Press L For Level Select", GetScreenWidth()/2, GetScreenHeight()/2 + 15, 25, GRAY);
+  }
+
 // To avoid cross referencing we put the create obstacle function in the game
 // header file
 std::vector<Obstacle> obstacle_create() {

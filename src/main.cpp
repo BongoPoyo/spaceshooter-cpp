@@ -25,14 +25,31 @@ int main(void)
 
     while (!WindowShouldClose()) // When game is opened
     {
-        handle_input();
-        game_update();
-
         BeginDrawing();
-
         ClearBackground(BLACK);
-        game_draw();
-        
+
+        switch(game_state)
+        {
+            case Gamestate::Menu:
+            draw_menu();
+            update_menu();
+            break;
+
+            case Gamestate::Level_Select:
+            draw_level_select();
+            update_level_select();
+            break;
+
+            case Gamestate::Game:
+            handle_input();
+            game_update();
+            game_draw();
+            break;
+
+            case Gamestate::Game_Over:
+            game_over();
+            break;
+        }
         // DrawText("Congrats! You created your first window!", 0 , 0, 20, GRAY);
         EndDrawing();
     }
